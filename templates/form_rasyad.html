@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tambah Transaksi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 2rem 1rem;
+        }
+        .glass-card {
+            background: rgba(255,255,255,0.2);
+            border-radius: 24px;
+            box-shadow: 0 12px 40px 0 rgba(30, 64, 175, 0.3);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.25);
+            padding: 3rem 2.5rem;
+            max-width: 600px;
+            animation: fadeIn 0.6s ease-out;
+        }
+        h2 {
+            color: #1e40af;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-label { color: #1e40af; font-weight: 600; }
+        .form-control, .form-select {
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+        }
+        .btn-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .btn-submit {
+            background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 0.85rem;
+        }
+        .btn-back {
+            background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+<div class="glass-card">
+    <h2><i class="bi bi-plus-circle-fill"></i> Tambah Transaksi</h2>
+    
+    <form method="POST">
+        <!-- Pilih Pasien -->
+        <div class="form-group">
+            <label class="form-label" for="id_pasien_rasyad"><i class="bi bi-person-check"></i> Pasien</label>
+            <select id="id_pasien_rasyad" name="pasien" class="form-select" required onchange="toggleTambahPasien()">
+                <option value="">-- Pilih Pasien --</option>
+                {% for p in pasien %}
+                    <option value="{{ p.id_pasien_rasyad }}">{{ p.nama_rasyad }}</option>
+                {% endfor %}
+                <option value="tambah">+ Tambah Pasien Baru</option>
+            </select>
+        </div>
+
+        <!-- Form tambah pasien baru -->
+        <div id="formTambahPasien" style="display:none;">
+            <div class="form-group">
+                <label class="form-label"><i class="bi bi-person-plus"></i> Nama Pasien Baru</label>
+                <input type="text" name="nama_baru" class="form-control" placeholder="Masukkan nama pasien">
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="bi bi-house-door"></i> Alamat</label>
+                <input type="text" name="alamat_baru" class="form-control" placeholder="Masukkan alamat pasien">
+            </div>
+            <div class="form-group">
+                <label class="form-label"><i class="bi bi-telephone"></i> Kontak</label>
+                <input type="text" name="kontak_baru" class="form-control" placeholder="Masukkan nomor telepon">
+            </div>
+        </div>
+
+        <!-- Rawat Inap -->
+        <div class="form-group">
+            <label class="form-label" for="id_rawat_rasyad"><i class="bi bi-hospital"></i> Rawat Inap (Opsional)</label>
+            <select id="id_rawat_rasyad" name="rawat_inap" class="form-select">
+                <option value="">-- Pilih Rawat Inap --</option>
+                {% for r in rawat_inap %}
+                    <option value="{{ r.id_rawat_rasyad }}">ID Rawat {{ r.id_rawat_rasyad }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <!-- Pilih Kamar -->
+        <div class="form-group">
+    <label class="form-label"><i class="bi bi-hospital"></i> Pilih Kamar</label>
+    <select name="rawat_inap" class="form-select" required>
+        <option value="">-- Pilih Kamar --</option>
+        {% for r in rawat_inap %}
+            {% if r.status_kamar_rasyad == "Kosong" %}
+                <option value="{{ r.id_rawat_rasyad }}">
+                    Kamar {{ r.no_kamar_rasyad }} - {{ r.kelas_rasyad }}
+                </option>
+            {% endif %}
+        {% endfor %}
+    </select>
+</div>
+
+        <!-- Total Biaya -->
+        <div class="form-group">
+            <label class="form-label"><i class="bi bi-cash-coin"></i> Total Biaya (Rp)</label>
+            <input type="number" id="total_biaya_rasyad" name="total" class="form-control" readonly placeholder="Total dihitung otomatis">
+        </div>
+
+        <!-- Status Pembayaran -->
+        <div class="form-group">
+            <label class="form-label"><i class="bi bi-credit-card"></i> Status Pembayaran</label>
+            <select name="status" class="form-select" required>
+                <option value="Belum Bayar">Belum Bayar</option>
+                <option value="Lunas">Lunas</option>
+            </select>
+        </div>
+
+        <!-- Tanggal Masuk -->
+        <div class="form-group">
+            <label class="form-label"><i class="bi bi-calendar-event"></i> Tanggal Masuk</label>
+            <input type="date" name="tgl_masuk" class="form-control" required>
+        </div>
+
+        <!-- Tanggal Keluar -->
+        <div class="form-group">
+            <label class="form-label"><i class="bi bi-calendar-event"></i> Tanggal Keluar</label>
+            <input type="date" name="tgl_keluar" class="form-control" required>
+        </div>
+
+        <!-- Tombol -->
+        <div class="btn-container">
+            <button type="submit" class="btn-submit"><i class="bi bi-check-circle"></i> Simpan</button>
+            <a href="/" class="btn-back"><i class="bi bi-arrow-left"></i> Kembali</a>
+        </div>
+    </form>
+
+
+<script>
+function toggleTambahPasien() {
+    const select = document.getElementById("id_pasien_rasyad");
+    const formTambah = document.getElementById("formTambahPasien");
+    if (select.value === "tambah") {
+        formTambah.style.display = "block";
+    } else {
+        formTambah.style.display = "none";
+    }
+}
+</script>
+</body>
+</html>
