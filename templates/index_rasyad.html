@@ -1,80 +1,3 @@
-<<<<<<< HEAD
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Data Transaksi Rawat Inap Rasyad</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .glass-card {
-            background: rgba(255,255,255,0.2);
-            border-radius: 24px;
-            box-shadow: 0 12px 40px 0 rgba(30, 64, 175, 0.3);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.25);
-            padding: 2rem;
-            max-width: 1200px;
-            margin: 2rem auto;
-            animation: fadeIn 0.6s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        h1 {
-            color: #1e40af;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .table thead {
-            background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
-            color: #fff;
-            font-weight: 600;
-        }
-        .table tbody tr:hover {
-            background-color: rgba(59, 130, 246, 0.1);
-        }
-        .badge-success {
-            background: linear-gradient(90deg, #16a34a 0%, #22c55e 100%);
-            color: #fff;
-        }
-        .badge-warning {
-            background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
-            color: #92400e;
-        }
-        .navbar {
-            background: linear-gradient(90deg, #1e40af 0%, #3b82f6 100%);
-        }
-        .navbar-brand, .nav-link {
-            color: #fff !important;
-            font-weight: 600;
-        }
-    </style>
-</head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#"><i class="bi bi-hospital"></i> Rumah Sakit</a>
-            <div class="d-flex">
-                <a href="/pasien" class="btn btn-success me-2"><i class="bi bi-person-lines-fill"></i> Data Pasien</a>
-                <a href="/tambah" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Tambah Transaksi</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Card -->
-    <div class="glass-card">
-    <h1 class="mb-4 text-center">Data Rawat Inap 🏥 <i class="bi bi-clipboard2-data"></i></h1>
-=======
     <!DOCTYPE html>
     <html lang="en">
     <head>
@@ -159,7 +82,6 @@
 <!-- Card -->
 <div class="glass-card">
     <h1 class="mb-4 text-center">Data Transaksi Rawat Inap RS. Zahran 🏥 <i class="bi bi-clipboard2-data"></i></h1>
->>>>>>> 3a5a157 (Update Transaksi Sistem Pengerjaan Rawat inap RS.Zahran)
     <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead>
@@ -191,10 +113,6 @@
                         {% endif %}
                     </td>
                     <td class="text-center">
-<<<<<<< HEAD
-                        <a href="/edit/{{ d.id_transaksi_rasyad }}" class="btn btn-secondary btn-sm"><i class="bi bi-pencil-square"></i> Edit</a>
-                        <a href="/hapus/{{ d.id_transaksi_rasyad }}" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus data?')"><i class="bi bi-trash"></i> Hapus</a>
-=======
                         <a href="/edit/{{ d.id_transaksi_rasyad }}" class="btn btn-secondary btn-sm">
                             <i class="bi bi-pencil-square"></i> Edit
                         </a>
@@ -205,7 +123,6 @@
                         <a href="/cetak_struk/{{ d.id_transaksi_rasyad }}" class="btn btn-primary btn-sm">
                             <i class="bi bi-receipt"></i> Struk
                         </a>
->>>>>>> 3a5a157 (Update Transaksi Sistem Pengerjaan Rawat inap RS.Zahran)
                     </td>
                 </tr>
                 {% endfor %}
@@ -213,11 +130,6 @@
         </table>
     </div>
 </div>
-<<<<<<< HEAD
-</body>
-</html>
-=======
 
     </body>
     </html>
->>>>>>> 3a5a157 (Update Transaksi Sistem Pengerjaan Rawat inap RS.Zahran)
