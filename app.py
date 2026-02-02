@@ -237,5 +237,130 @@ def cetak_pasien():
     pdf.output(pdf_path)
     return send_file(pdf_path, as_attachment=True)
 
+# CETAK LAPORAN SEMUA TRANSAKSI
+@app.route("/cetak_transaksi")
+def cetak_transaksi():
+    cursor.execute("""
+        SELECT 
+            t.id_transaksi_rasyad,
+            p.nama_rasyad,
+            k.kelas_rasyad,
+            r.tgl_masuk_rasyad,
+            r.tgl_keluar_rasyad,
+            t.total_biaya_rasyad,
+            t.status_pembayaran_rasyad
+        FROM transaksi_rasyad t
+        JOIN pasien_rasyad p ON t.id_pasien_rasyad = p.id_pasien_rasyad
+        JOIN rawat_inap_rasyad r ON t.id_rawat_rasyad = r.id_rawat_rasyad
+        JOIN kamar_rasyad k ON r.id_kamar_rasyad = k.id_kamar_rasyad
+    """)
+    data = cursor.fetchall()
+
+    class PDF(FPDF):
+        def header(self):
+            self.set_font('Arial', 'B', 14)
+            self.cell(0, 10, "Laporan Transaksi Rawat Inap", ln=True, align='C')
+            self.ln(5)
+
+        def footer(self):
+            self.set_y(-15)
+            self.set_font('Arial', 'I', 8)
+            self.cell(0, 10, f'Halaman {self.page_no()}', align='C')
+
+    pdf = PDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=10)
+
+    # Header tabel
+    pdf.set_fill_color(30, 64, 175)
+    pdf.set_text_color(255, 255, 255)
+    pdf.cell(15, 8, "ID", border=1, align='C', fill=True)
+    pdf.cell(35, 8, "Pasien", border=1, align='C', fill=True)
+    pdf.cell(25, 8, "Kelas", border=1, align='C', fill=True)
+    pdf.cell(25, 8, "Masuk", border=1, align='C', fill=True)
+    pdf.cell(25, 8, "Keluar", border=1, align='C', fill=True)
+    pdf.cell(30, 8, "Biaya", border=1, align='C', fill=True)
+    pdf.cell(30, 8, "Status", border=1, align='C', fill=True)
+    pdf.ln()
+
+    # Isi tabel
+    pdf.set_text_color(0, 0, 0)
+    for row in data:
+        pdf.cell(15, 8, str(row['id_transaksi_rasyad']), border=1, align='C')
+        pdf.cell(35, 8, row['nama_rasyad'], border=1)
+        pdf.cell(25, 8, row['kelas_rasyad'], border=1)
+        pdf.cell(25, 8, str(row['tgl_masuk_rasyad']), border=1)
+        pdf.cell(25, 8, str(row['tgl_keluar_rasyad']), border=1)
+        pdf.cell(30, 8, f"Rp {int(row['total_biaya_rasyad']):,}", border=1)
+        pdf.cell(30, 8, row['status_pembayaran_rasyad'], border=1)
+        pdf.ln()
+
+    pdf_path = "laporan_transaksi.pdf"
+    pdf.output(pdf_path)
+    return send_file(pdf_path, as_attachment=True)
+
+# CETAK STRUK PER TRANSAKSI
+@app.route("/cetak_struk/<id>")
+def cetak_struk(id):
+    cursor.execute("""
+        SELECT 
+            t.id_transaksi_rasyad,
+            p.nama_rasyad,
+            k.kelas_rasyad,
+            r.tgl_masuk_rasyad,
+            r.tgl_keluar_rasyad,
+            t.total_biaya_rasyad,
+            t.status_pembayaran_rasyad
+        FROM transaksi_rasyad t
+        JOIN pasien_rasyad p ON t.id_pasien_rasyad = p.id_pasien_rasyad
+        JOIN rawat_inap_rasyad r ON t.id_rawat_rasyad = r.id_rawat_rasyad
+        JOIN kamar_rasyad k ON r.id_kamar_rasyad = k.id_kamar_rasyad
+        WHERE t.id_transaksi_rasyad=%s
+    """, (id,))
+    transaksi = cursor.fetchone()
+
+    if not transaksi:
+        return "❌ Transaksi tidak ditemukan!"
+
+    pdf = FPDF('P', 'mm', (80, 150))  # ukuran kecil ala struk
+    pdf.add_page()
+
+    # Header
+    pdf.set_font("Arial", 'B', 14)
+    pdf.cell(0, 8, "Rumah Sakit Rasyad", ln=True, align='C')
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(0, 5, "Jl. Contoh No.123, Bandung", ln=True, align='C')
+    pdf.cell(0, 5, "Telp: (021) 1234567", ln=True, align='C')
+    pdf.ln(5)
+    pdf.cell(0, 5, "=== STRUK PEMBAYARAN RAWAT INAP ===", ln=True, align='C')
+    pdf.ln(5)
+
+    # Isi
+    pdf.set_font("Arial", '', 10)
+    pdf.cell(35, 6, "ID Transaksi", 0, 0)
+    pdf.cell(40, 6, f": {transaksi['id_transaksi_rasyad']}", 0, 1)
+    pdf.cell(35, 6, "Nama Pasien", 0, 0)
+    pdf.cell(40, 6, f": {transaksi['nama_rasyad']}", 0, 1)
+    pdf.cell(35, 6, "Kelas Kamar", 0, 0)
+    pdf.cell(40, 6, f": {transaksi['kelas_rasyad']}", 0, 1)
+    pdf.cell(35, 6, "Tanggal Masuk", 0, 0)
+    pdf.cell(40, 6, f": {transaksi['tgl_masuk_rasyad']}", 0, 1)
+    pdf.cell(35, 6, "Tanggal Keluar", 0, 0)
+    pdf.cell(40, 6, f": {transaksi['tgl_keluar_rasyad']}", 0, 1)
+    pdf.cell(35, 6, "Total Biaya", 0, 0)
+    pdf.cell(40, 6, f": Rp {int(transaksi['total_biaya_rasyad']):,}", 0, 1)
+    pdf.cell(35, 6, "Status Bayar", 0, 0)
+    pdf.cell(40, 6, f": {transaksi['status_pembayaran_rasyad']}", 0, 1)
+
+    # Footer
+    pdf.ln(10)
+    pdf.cell(0, 5, "--------------------------------", ln=True, align='C')
+    pdf.cell(0, 5, "Terima kasih atas kunjungan Anda", ln=True, align='C')
+    pdf.cell(0, 5, "Semoga lekas sembuh 🙏", ln=True, align='C')
+
+    pdf_path = f"struk_{id}.pdf"
+    pdf.output(pdf_path)
+    return send_file(pdf_path, as_attachment=True)
+
 if __name__ == "__main__":
     app.run(debug=True)
